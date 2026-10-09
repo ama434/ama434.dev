@@ -1,0 +1,16 @@
+{
+  "name": "ama434.dev",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ama434.dev の個人サイト（トップ、プロフィール、ブログ、発表資料一覧）",
+  "author": "ama434",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.9.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module"
+}
