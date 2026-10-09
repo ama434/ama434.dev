@@ -36,6 +36,7 @@ Astro、React、TypeScript による静的生成を候補として検討して�
 astro.config.mjs
 package.json
 tsconfig.json
+wrangler.jsonc
 .github/workflows/
 public/
 src/
@@ -55,6 +56,16 @@ src/
   styles/
 ```
 
+## 公開基盤
+
+公開基盤には Cloudflare Workers Static Assets を採用します。静的に生成した HTML、CSS、JavaScript、画像を配信し、当初は Worker の処理コードや SSR を導入しない方針です。設定とデプロイはまだ行っていません。
+
+GitHub の `ama434/ama434.dev` を Workers Builds に接続し、`main` を本番公開、作業ブランチをプレビューに使う予定です。独自ドメインは `ama434.dev` とし、公開設定は Wrangler の設定ファイルで管理します。
+
+旧サブドメインからの転送には Cloudflare の Redirect Rules を使う方針です。サイト内のパス単位の転送と、ホスト名を条件とする旧ドメインからの転送を分けて管理します。具体的な URL 対応と切り替え手順は、内容の移行先を決めてから設定します。
+
+仕様は [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) と [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/) の公式ドキュメントを参照してください。
+
 ## 旧サイトからの移行
 
 移行元は https://about.ama434.dev で公開している旧サイトで、ソースは https://github.com/ama434/about-ama434 にあります。旧サイトは VitePress で作っており、トップ、プロフィール、制作物、リンクの各ページを持っています。旧リポジトリは参照するだけで、編集はしません。
@@ -70,13 +81,19 @@ src/
 | `https://about.ama434.dev/docs/works` | `/about` 内、または必要に応じて作る下位ページ（未決定） |
 | `https://about.ama434.dev/docs/links` | `/about` 内、または必要に応じて作る下位ページ（未決定） |
 
-公開基盤が対応していれば、転送には HTTP の 301 または 308 を使います。転送を続ける期間は、旧サブドメインの DNS と HTTPS も維持します。
+旧サブドメインからの転送には HTTP の 301 または 308 を使い、転送を続ける期間は旧サブドメインの DNS と HTTPS も維持します。
 
 ## 未決定のこと
 
 - Astro を含む構成の採用
-- 公開基盤と、転送の具体的な設定方法
+- Cloudflare のビルド・公開・転送設定と、切り替えの具体的な手順
 - `/docs/works` と `/docs/links` の移行先
 - デザインと各ページの本文
 - 発表資料の掲載形式
 - Node.js のバージョンとパッケージマネージャー
+
+## ライセンス
+
+ソフトウェア部分には [MIT License](LICENSES/MIT.txt)、文章と自作の非ソフトウェア作品には [CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt) を適用します。文章にはプロフィール、ブログ記事、発表資料と、この README などの文書を含みます。ソフトウェア作品とコード例は原則として MIT の対象です。
+
+適用範囲、クレジットと継承の条件、第三者の素材の扱いは [LICENSE.md](LICENSE.md) を参照してください。二つのライセンスは対象別に適用するもので、同じ対象について自由に選べる指定ではありません。
