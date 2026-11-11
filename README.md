@@ -10,6 +10,8 @@ Astro で雛形を作りました。`/`、`/about/`、`/blog/`、`/slide/` に�
 - Node.js: `.node-version` で 26 系（2026 年 11 月時点の Active LTS）を指定しています。Astro 7 が求める最低バージョンは 22.23.4 です。
 - 依存パッケージ: `astro` のみ。
 
+作業の経過と引き継ぎ事項は [docs/progress.md](docs/progress.md) に記録しています。
+
 ## 開発
 
 ```sh
