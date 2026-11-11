@@ -4,7 +4,20 @@ ama434 の個人サイトを管理するリポジトリです。トップペー�
 
 ## 現在の状態
 
-`pnpm init` で package.json を作成済みです。パッケージマネージャーには pnpm を使い、バージョン条件は package.json の `devEngines.packageManager` で管理します。依存パッケージ、アプリケーション、開発・ビルド・テスト用のスクリプト、CI、公開設定はまだありません。
+Astro で雛形を作りました。`/`、`/about/`、`/blog/`、`/slide/` に仮のページがあり、共通レイアウトと仮の CSS を使っています。Astro をこのまま使い続けるかは、雛形を見て判断します。React、Markdown のコンテンツ、テスト、CI、公開設定はまだありません。
+
+- パッケージマネージャー: pnpm。バージョン条件は package.json の `devEngines.packageManager`（`^11.9.0`）で管理します。
+- Node.js: `.node-version` で 26 系（2026 年 11 月時点の Active LTS）を指定しています。Astro 7 が求める最低バージョンは 22.23.4 です。
+- 依存パッケージ: `astro` のみ。
+
+## 開発
+
+```sh
+pnpm install
+pnpm dev      # 開発サーバー（http://localhost:4321/）
+pnpm build    # dist/ に静的ファイルを生成
+pnpm preview  # 生成した dist/ をローカルで確認
+```
 
 ## URL の役割
 
@@ -17,45 +30,48 @@ ama434 の個人サイトを管理するリポジトリです。トップペー�
 
 サイトはドメインのルートで公開するので、`/about` のようなサブパスをベースパスには設定しません。
 
-## 構成案（未導入）
+## 構成
 
-Astro、React、TypeScript による静的生成を候補として検討しています。どれもまだ導入しておらず、Astro の採用も確定していません。この案を選んだ理由は二つあります。Markdown で本文を書けることと、React の経験を活かしながら、ブラウザで動く JavaScript を操作が必要な部品だけに限れることです。
+Astro による静的生成で作っています。Markdown で本文を書けることと、React の経験を活かしながら、ブラウザで動く JavaScript を操作が必要な部品だけに限れることが理由です。
 
-案の中身は次のとおりです。
+方針と案は次のとおりです。導入済みのものと、まだ案の段階のものがあります。
 
-- 本文は Markdown で書き、MDX は必要になったときだけ使う。
-- 共通のページとレイアウトは Astro で作り、React は操作を伴う部品にだけ使う。
-- ブログ記事の frontmatter は Content Collections で検証する。
+- 雛形は Astro の minimal テンプレートを元に作った。既存のテーマは使わず、見た目と文字組みは自前の CSS で書く（導入済み。今の CSS は仮）。
+- 文字組みはまず CSS で指定する。JavaScript で改行位置を計算する組版（Knuth-Plass など）は、CSS で組んだサイトを公開してから検討する。
+- 本文は Markdown で書き、MDX は必要になったときだけ使う（未導入）。
+- React は操作を伴う部品にだけ使う（未導入）。
+- ブログ記事の frontmatter は Content Collections で検証する（未導入）。
 - `/slide` は発表資料の一覧とリンクから始める。サイト内でスライドを再生する仕組みは今のところ作らない。
 - DB、CMS、SSR、monorepo、大きな UI ライブラリは、必要が生じるまで入れない。
-- Astro を採用する場合は minimal テンプレートから始める。既存のテーマは使わず、見た目と文字組みは自前の CSS で書く。
-- 文字組みはまず CSS で指定する。JavaScript で改行位置を計算する組版（Knuth-Plass など）は、CSS で組んだサイトを公開してから検討する。
 
-この案どおりに作った場合のディレクトリ構成は、たとえば次のようになります。package.json 以外は現在存在しません。
+ディレクトリ構成は次のとおりです。「（未作成）」の付いたものは、今後作る予定の案です。
 
 ```text
-（構成案）
 astro.config.mjs
 package.json
+pnpm-lock.yaml
 tsconfig.json
-wrangler.jsonc
-.github/workflows/
-public/
+.node-version
+wrangler.jsonc            （未作成）
+.github/workflows/        （未作成）
+public/                   （未作成）
 src/
   pages/
     index.astro
     about.astro
     blog/index.astro
-    blog/[...slug].astro
+    blog/[...slug].astro  （未作成）
     slide/index.astro
   layouts/
-  components/
-  content/
+    BaseLayout.astro
+  components/             （未作成）
+  content/                （未作成）
     about.md
     blog/
     slides/
-  content.config.ts
+  content.config.ts       （未作成）
   styles/
+    global.css
 ```
 
 ## 公開基盤
@@ -89,8 +105,8 @@ GitHub の `ama434/ama434.dev` を Workers Builds に接続し、`main` を本�
 
 次の順で進める案です。まだ確定していません。
 
-1. Astro を採用するかと、Node.js のバージョンを決める。
-2. 雛形を作る。`/`、`/about/`、`/blog/`、`/slide/` に仮のページを置き、共通レイアウトと最低限の CSS を用意して、ビルドが通るようにする。
+1. Astro を採用するかと、Node.js のバージョンを決める。（Astro で雛形を作って試している。Node.js は 26 系を指定した）
+2. 雛形を作る。`/`、`/about/`、`/blog/`、`/slide/` に仮のページを置き、共通レイアウトと最低限の CSS を用意して、ビルドが通るようにする。（済み）
 3. Cloudflare につなぎ、作業ブランチのプレビュー URL で 4 ページが見られる状態にする。
 4. `/about` の本文の書き直し、デザインと文字組みの CSS、ブログの仕組み、`/slide` の一覧を少しずつ進める。
 
@@ -100,12 +116,12 @@ GitHub の `ama434/ama434.dev` を Workers Builds に接続し、`main` を本�
 
 ## 未決定のこと
 
-- Astro を含む構成の採用
+- Astro を使い続けるか（雛形で試している）
+- React の導入時期
 - Cloudflare のビルド・公開・転送設定と、切り替えの具体的な手順
 - `/docs/works` と `/docs/links` の移行先
 - デザインと各ページの本文
 - 発表資料の掲載形式
-- Node.js のバージョン（その時点の Active LTS を使う案）
 - 日本語向けの組版エンジンを作るかどうかと、その公開方法
 
 ## ライセンス
